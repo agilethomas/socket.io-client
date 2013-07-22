@@ -1964,8 +1964,10 @@ var io = ('undefined' === typeof module ? {} : module.exports);
     this.open = false;
 
     if (wasConnected || wasConnecting) {
-      this.transport.close();
-      this.transport.clearTimeouts();
+      if (this.transport) {
+        this.transport.close();
+        this.transport.clearTimeouts();
+      }
       if (wasConnected) {
         this.publish('disconnect', reason);
 
@@ -2027,6 +2029,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
       };
 
       if (self.connecting && self.reconnecting) {
+        clearTimeout(self.reconnectionTimer);
         return self.reconnectionTimer = setTimeout(maybeReconnect, 1000);
       }
 
@@ -2049,11 +2052,13 @@ var io = ('undefined' === typeof module ? {} : module.exports);
 
         self.connect();
         self.publish('reconnecting', self.reconnectionDelay, self.reconnectionAttempts);
+        clearTimeout(self.reconnectionTimer);
         self.reconnectionTimer = setTimeout(maybeReconnect, self.reconnectionDelay);
       }
     };
 
     this.options['try multiple transports'] = false;
+    clearTimeout(this.reconnectionTimer);
     this.reconnectionTimer = setTimeout(maybeReconnect, this.reconnectionDelay);
 
     this.on('connect', maybeReconnect);
@@ -3865,7 +3870,4 @@ var swfobject=function(){var D="undefined",r="object",S="Shockwave Flash",W="Sho
   , this
 );
 
-if (typeof define === "function" && define.amd) {
-  define([], function () { return io; });
-}
 })();

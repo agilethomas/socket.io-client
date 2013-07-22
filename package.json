@@ -1,7 +1,7 @@
 {
     "name": "socket.io-client-agilelaw"
   , "description": "Socket.IO client for the browser and node.js"
-  , "version": "0.9.11-agilelaw"
+  , "version": "0.9.11-agilelaw-1"
   , "main" : "./lib/io.js"
   , "browserify": "./dist/socket.io.js"
   , "homepage": "http://socket.io"
