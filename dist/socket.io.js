@@ -1538,6 +1538,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
     this.namespaces = {};
     this.buffer = [];
     this.doBuffer = false;
+    this.connection_attempts = 0;
 
     if (this.options['sync disconnect on unload'] &&
         (!this.isXDomain() || io.util.ua.hasCORS)) {
@@ -1693,10 +1694,14 @@ var io = ('undefined' === typeof module ? {} : module.exports);
       return this;
     }
 
+    var attempt_number = ++this.connection_attempts;
     var self = this;
     self.connecting = true;
     
     this.handshake(function (sid, heartbeat, close, transports) {
+      if (attempt_number != self.connection_attempts)
+        return;
+
       self.sessionid = sid;
       self.closeTimeout = close * 1000;
       self.heartbeatTimeout = heartbeat * 1000;
